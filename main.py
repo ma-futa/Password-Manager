@@ -1,3 +1,4 @@
+import json
 from tkinter import *
 from tkinter import messagebox
 from random import choice, randint, shuffle
@@ -28,14 +29,27 @@ def generate_password():
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save():
-    if len(website_entry.get()) == 0 or len(username_entry.get()) == 0 or len(password_entry.get()) == 0:
+    website = website_entry.get()
+    email = username_entry.get()
+    password = password_entry.get()
+    new_data =  {
+        website:{
+            'email':email,
+            'password':password
+        }
+    }
+    if len(website) == 0 or len(email) == 0 or len(password) == 0:
         messagebox.showwarning(title='Warning', message='please fill in all fields')
         return
 
-    if messagebox.askokcancel(title=website_entry.get(),
-                              message=f"These are the details entered \nEmail/UserName: {username_entry.get()}\nPassword: {password_entry.get()}\nIs it okay to save?"):
-        with open('data.txt', mode='a') as file:
-            file.write(f'{website_entry.get()} | {username_entry.get()} | {password_entry.get()}\n ')
+    if messagebox.askokcancel(title=website,
+                              message=f"These are the details entered \nEmail/UserName: {email}\nPassword: {password}\nIs it okay to save?"):
+        with open('data.json', mode='r') as file:
+            data = json.load(file)
+            data.update(new_data)
+        with open('data.json', mode='w') as file:
+            json.dump(data,file,indent=4)
+            # file.write(f'{website_entry.get()} | {username_entry.get()} | {password_entry.get()}\n ')
         website_entry.delete(0, END)
         password_entry.delete(0, END)
 
