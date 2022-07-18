@@ -5,6 +5,23 @@ from random import choice, randint, shuffle
 import pyperclip
 
 
+# ---------------------------- SEARCH WEBSITE ------------------------------- #
+def search():
+    website = website_entry.get().capitalize()
+    try:
+        with open('data.json') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        messagebox.showwarning(message='please save a record first')
+    else:
+        if website in data:
+            messagebox.showinfo(title=website,
+                                message=f"email: {data[website]['email']}\npassword: {data[website]['password']}")
+            pyperclip.copy(data[website]['password'])
+        else:
+            messagebox.showwarning(title=website, message=f"{website} does not have a saved password")
+
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 # Password Generator Project
 def generate_password():
@@ -21,8 +38,8 @@ def generate_password():
                         choice(letters) for _ in range(randint(8, 10))]
     shuffle(password_list)
     password = "".join(password_list)
-    password_entry.delete(0,END)
-    password_entry.insert(END,password)
+    password_entry.delete(0, END)
+    password_entry.insert(END, password)
     pyperclip.copy(password)
     # print(f"Your password is: {password}")
 
@@ -32,10 +49,10 @@ def save():
     website = website_entry.get()
     email = username_entry.get()
     password = password_entry.get()
-    new_data =  {
-        website:{
-            'email':email,
-            'password':password
+    new_data = {
+        website: {
+            'email': email,
+            'password': password
         }
     }
     if len(website) == 0 or len(email) == 0 or len(password) == 0:
@@ -53,7 +70,7 @@ def save():
                 json.dump(new_data, file, indent=4)
         else:
             with open('data.json', mode='w') as file:
-                json.dump(data,file,indent=4)
+                json.dump(data, file, indent=4)
         finally:
             # file.write(f'{website_entry.get()} | {username_entry.get()} | {password_entry.get()}\n ')
             website_entry.delete(0, END)
@@ -78,8 +95,8 @@ password_label = Label(text='Password', font=('Arial'))
 password_label.grid(column=0, row=3)
 
 website_entry = Entry()
-website_entry.config(width=35)
-website_entry.grid(column=1, row=1, columnspan=2, )
+website_entry.config(width=21)
+website_entry.grid(column=1, row=1, )
 website_entry.focus()
 username_entry = Entry()
 username_entry.config(width=35)
@@ -89,9 +106,11 @@ password_entry = Entry()
 password_entry.config(width=21)
 password_entry.grid(column=1, row=3, columnspan=1)
 
-generate_button = Button(text="Generate Password",command=generate_password)
+generate_button = Button(text="Generate Password", command=generate_password)
 generate_button.grid(column=2, row=3)
 add_button = Button(text="Add", width=36, command=save)
 add_button.grid(column=1, row=4, columnspan=2)
+search_button = Button(text='   Search   ', command=search, width=13)
+search_button.grid(column=2, row=1)
 
 window.mainloop()
