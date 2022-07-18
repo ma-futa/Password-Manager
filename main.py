@@ -44,14 +44,20 @@ def save():
 
     if messagebox.askokcancel(title=website,
                               message=f"These are the details entered \nEmail/UserName: {email}\nPassword: {password}\nIs it okay to save?"):
-        with open('data.json', mode='r') as file:
-            data = json.load(file)
-            data.update(new_data)
-        with open('data.json', mode='w') as file:
-            json.dump(data,file,indent=4)
+        try:
+            with open('data.json', mode='r') as file:
+                data = json.load(file)
+                data.update(new_data)
+        except FileNotFoundError:
+            with open('data.json', mode='w') as file:
+                json.dump(new_data, file, indent=4)
+        else:
+            with open('data.json', mode='w') as file:
+                json.dump(data,file,indent=4)
+        finally:
             # file.write(f'{website_entry.get()} | {username_entry.get()} | {password_entry.get()}\n ')
-        website_entry.delete(0, END)
-        password_entry.delete(0, END)
+            website_entry.delete(0, END)
+            password_entry.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
